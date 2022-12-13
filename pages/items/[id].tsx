@@ -7,11 +7,13 @@ const ItemDetail: NextPage = () => {
     <Layout canGoBack>
       <div className="px-4  py-4">
         <div className="mb-8">
-          <div className="h-96 bg-slate-300" />
+          {/* 사진 이미지위치 */}
+          <div className="h-96 bg-slate-300" /> 
           <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
+            {/* 유저 이미지 위치 */}
             <div className="w-12 h-12 rounded-full bg-slate-300" />
             <div>
-              <p className="text-sm font-medium text-gray-700">Steve Jebs</p>
+              <p className="text-sm font-medium text-gray-700">상영</p>
               <p className="text-xs font-medium text-gray-500">
                 View profile &rarr;
               </p>
@@ -30,6 +32,7 @@ const ItemDetail: NextPage = () => {
               in there, and that ni**a Winston or anybody else is in there, you
               the first motherfucker to get shot. You understand?
             </p>
+            {/* 버튼 위치 */}
             <div className="flex items-center justify-between space-x-2">
               <Button large text="Talk to seller" />
               <button className="p-3 rounded-md flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500">

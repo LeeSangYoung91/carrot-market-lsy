@@ -18,10 +18,18 @@ export default function Layout({
 }: LayoutProps) {
   const router = useRouter();
   const onClick = () => {
+//     router.back()
+// history로 navigate합니다. 브라우저의 뒤로 버튼을 클릭하는 것과 같습니다. window.history.back()을 실행합니다.
+// https://nextjs.org/docs/api-reference/next/router#routerback
+
+// router.push()
+// 클라이언트 측 전환을 처리합니다. 외부 URL에 대해 router.push를 사용할 필요가 없습니다. window.location은 이러한 경우에 더 적합합니다.
+// https://nextjs.org/docs/api-reference/next/router#routerpush
     router.back();
   };
   return (
     <div>
+      {/* max-w-xl 을 추가해야 가운대에 감 */}
       <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
         {canGoBack ? (
           <button onClick={onClick} className="absolute left-4">
@@ -45,6 +53,7 @@ export default function Layout({
           <span className={cls(canGoBack ? "mx-auto" : "", "")}>{title}</span>
         ) : null}
       </div>
+   
       <div className={cls("pt-12", hasTabBar ? "pb-24" : "")}>{children}</div>
       {hasTabBar ? (
         <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-10 pb-5 pt-3 flex justify-between text-xs">
@@ -83,6 +92,7 @@ export default function Layout({
                   : "hover:text-gray-500 transition-colors"
               )}
             >
+              {/* https://heroicons.dev/?query=home  svg찾음 그림 클릭하고 붙여넣기 */}
               <svg
                 className="w-6 h-6"
                 fill="none"
