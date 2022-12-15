@@ -9,7 +9,7 @@ interface MessageProps {
 export default function Message({
   message,
   avatarUrl,
-  reversed,
+  reversed,  //답장한부분 
 }: MessageProps) {
   return (
     <div

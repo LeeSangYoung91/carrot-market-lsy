@@ -2,6 +2,8 @@ interface InputProps {
     label: string;
     name: string;
     kind?: "text" | "phone" | "price";
+    //label name kind 등 여러개 보내려고 이렇게 씀  이걸 이용하면 이컴포넌트를 사용할때 원하는 prop을
+    //바로 input에 넣어줋수 있다. 27라인
     [key: string]: any;
   }
   
