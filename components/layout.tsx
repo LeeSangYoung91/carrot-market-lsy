@@ -17,6 +17,7 @@ export default function Layout({
   children,
 }: LayoutProps) {
   const router = useRouter();
+
   const onClick = () => {
 //     router.back()
 // history로 navigate합니다. 브라우저의 뒤로 버튼을 클릭하는 것과 같습니다. window.history.back()을 실행합니다.
@@ -28,6 +29,7 @@ export default function Layout({
     router.back();
   };
   return (
+
     <div>
       {/* max-w-xl 을 추가해야 가운대에 감 */}
       <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
@@ -191,5 +193,6 @@ export default function Layout({
         </nav>
       ) : null}
     </div>
+
   );
 }
