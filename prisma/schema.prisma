@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-   //fk 보장  이유는 planetScale은 fk속성이 없어서
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  //fk 보장  이유는 planetScale은 fk속성이 없어서
   relationMode = "prisma"
 }
 
@@ -15,11 +15,21 @@ datasource db {
 // npx prisma generate 어떻게 코드로 데이터베이스에 말을 걸지 클라이언트를 생성해줌 관리자에서 데이터베이스랑 직접 할수있게함 디비버 같은거
 //npx prisma studio    db패널
 model User {
-  id     Int     @id @default(autoincrement())
-  phone  Int?    @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
-  email  String? @unique
-  name   String
-  avatar String? //파일
-  insertDt DateTime @default(now())  //now함수는 새유저가 만들어 질때 그 시점의 날짜를 가져와서 여기에 넣어주는 함수
-  updateDt DateTime @updatedAt  //업데이트 될때마다 이 필드가 변할것
+  id       Int      @id @default(autoincrement())
+  phone    Int?     @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
+  email    String?  @unique
+  name     String
+  avatar   String? //파일
+  insertDt DateTime @default(now()) //now함수는 새유저가 만들어 질때 그 시점의 날짜를 가져와서 여기에 넣어주는 함수
+  updateDt DateTime @updatedAt //업데이트 될때마다 이 필드가 변할것
+  tokens   Token[]
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  payload   String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
