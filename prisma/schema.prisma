@@ -16,7 +16,7 @@ datasource db {
 //npx prisma studio    db패널
 model User {
   id       Int      @id @default(autoincrement())
-  phone    Int?     @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
+  phone    BigInt?     @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
   email    String?  @unique
   name     String
   avatar   String? //파일
@@ -28,7 +28,7 @@ model User {
 model Token {
   id        Int      @id @default(autoincrement())
   payload   String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)  //Cascade 말고 SetNull 도있음
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
