@@ -11,12 +11,12 @@ datasource db {
 }
 
 //https://app.planetscale.com/zxcdasd3/spare/main/schema
-//pscale connect spare  후      prisma db push
+//pscale connect spare  후     npx prisma db push
 // npx prisma generate 어떻게 코드로 데이터베이스에 말을 걸지 클라이언트를 생성해줌 관리자에서 데이터베이스랑 직접 할수있게함 디비버 같은거
 //npx prisma studio    db패널
 model User {
   id       Int      @id @default(autoincrement())
-  phone    BigInt?     @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
+  phone    String?  @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
   email    String?  @unique
   name     String
   avatar   String? //파일

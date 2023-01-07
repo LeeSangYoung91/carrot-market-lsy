@@ -1,10 +1,11 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "@components/button";
 import Input from "@components/input";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
+import { useRouter } from "next/router";
 
 interface EnterForm {
     email?: string;
@@ -25,9 +26,11 @@ const Enter: NextPage = () => {
     const [confirmToken, { loading: tokenLoading, data: tokenData }] =
         useMutation<MutationResult>("/api/users/confirm");
     const { register, handleSubmit, reset } = useForm<EnterForm>();
+
     const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
         useForm<TokenForm>();
     const [method, setMethod] = useState<"email" | "phone">("email");
+    
     const onEmailClick = () => {
         reset();
         setMethod("email");
@@ -36,14 +39,29 @@ const Enter: NextPage = () => {
         reset();
         setMethod("phone");
     };
+    
+    //로그인버튼 누를시 
     const onValid = (validForm: EnterForm) => {
         if (loading) return;
         enter(validForm);
     };
+
+    //토큰검사
     const onTokenValid = (validForm: TokenForm) => {
+        console.log(validForm);
         if (tokenLoading) return;
         confirmToken(validForm);
     };
+
+    //토큰맞으면 타는곳
+    const router = useRouter();
+    useEffect(() => {
+        
+      if (tokenData?.ok) {
+        router.push("/");
+      }
+    }, [tokenData, router]);
+
     return (
         <div className='mt-16 px-4'>
             <h3 className='text-center text-3xl font-bold'>Enter to Carrot</h3>

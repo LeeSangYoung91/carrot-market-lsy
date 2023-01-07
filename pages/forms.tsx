@@ -54,10 +54,10 @@ export default function Forms() {
         mode: "onChange", // 변경할때마다 이벤트
     });
     const onValid = (data: LoginForm) => {
-        console.log("im valid bby");
+      
     };
     const onInvalid = (errors: FieldErrors) => {
-        console.log(errors);
+
     };
     return (
         <form onSubmit={handleSubmit(onValid, onInvalid)}>

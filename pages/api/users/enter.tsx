@@ -4,20 +4,6 @@ import withHandler, { ResponseType } from "@libs/server/withHandler";
 import client from "@libs/server/client";
 import smtpTransport from "@libs/server/email";
 
-// const obj = {
-//   a: 10,
-//   b: 20,
-// };
-// const newObj = { ...obj };
-// console.log(newObj); // { a: 10, b: 20 }
-
-// const arr = [1, 2, 3];
-// const newArr = [...arr]; // [1, 2, 3]
-// console.log(newArr);
-
-// const addedArr = [...arr,4]; //[1,2,3,4]
-// console.log(addedArr);
-
 //   connect
 // connect 쿼리는 ID 또는 고유 식별자를 지정하여 레코드를 기존 relation 레코드에 연결합니다. (레코드를 연결)
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#connect
@@ -33,7 +19,8 @@ async function handler(
     res: NextApiResponse<ResponseType>
 ) {
     const { phone, email } = req.body;
-    const user = phone ? { phone: +phone } : email ? { email } : null;
+  //  const user = phone ? { phone: +phone } : email ? { email } : null;
+    const user = phone ? { phone } : email ? { email } : null;
     if (!user) return res.status(400).json({ ok: false });
     const payload = Math.floor(100000 + Math.random() * 900000) + "";
 
@@ -84,8 +71,6 @@ async function handler(
     //     smtpTransport.close();
     //     console.log(result);
     // }
-    console.log(token);
-    console.log(user);
     //const payload = phone ? { phone: +phone } : { email };  //phone이 있다면 { phone: +phone }  없다면 email
     //upsert : 조회하고 존재하는 데이터가 있다면 db에서 가져옴
     // const user = await client.user.upsert({

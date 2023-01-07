@@ -16,6 +16,7 @@ export default function withHandler(
     if (req.method !== method) {
       return res.status(405).end();
     }
+    console.log(req.session);
     try {
       await fn(req, res);
     } catch (error) {
