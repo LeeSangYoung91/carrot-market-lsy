@@ -13,7 +13,7 @@ interface ConfigType {
 
 export default function withHandler({
   method,
-  isPrivate = true,
+  isPrivate = true,  //기본값이 true  비공개
   handler,
 }: ConfigType) {
   return async function (
