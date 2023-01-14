@@ -48,7 +48,7 @@ const Enter: NextPage = () => {
 
     //토큰검사
     const onTokenValid = (validForm: TokenForm) => {
-        console.log(validForm);
+   //    console.log(validForm);
         if (tokenLoading) return;
         confirmToken(validForm);
     };

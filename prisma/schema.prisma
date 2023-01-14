@@ -1,13 +1,14 @@
 //이파일은 프리스마 설정을 하고, 데이터가 어떻게 새겼는지 정의하는 파일임
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   //fk 보장  이유는 planetScale은 fk속성이 없어서
-  relationMode = "prisma"
+  referentialIntegrity = "prisma"
 }
 
 //https://app.planetscale.com/zxcdasd3/spare/main/schema
@@ -23,13 +24,27 @@ model User {
   insertDt DateTime @default(now()) //now함수는 새유저가 만들어 질때 그 시점의 날짜를 가져와서 여기에 넣어주는 함수
   updateDt DateTime @updatedAt //업데이트 될때마다 이 필드가 변할것
   tokens   Token[]
+  products Product[]  
+  
 }
 
 model Token {
   id        Int      @id @default(autoincrement())
   payload   String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)  //Cascade 말고 SetNull 도있음
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  image       String
+  name        String
+  price       Int
+  description String   @db.MediumText
 }

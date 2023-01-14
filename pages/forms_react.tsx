@@ -29,7 +29,7 @@ export default function Forms() {
   const onSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
       //페이지가 새로고침하는 걸 막기 위해서 
       event.preventDefault();
-      console.log(username,email,password);
+   //console.log(username,email,password);
     if (username === "" || email === "" || password === "") {
       setFormErrors("All fields are required");
     }

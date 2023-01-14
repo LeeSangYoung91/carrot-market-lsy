@@ -5,22 +5,25 @@ export interface ResponseType {
   [key: string]: any;
 }
 
+type method = "GET" | "POST" | "DELETE";
+
 interface ConfigType {
-  method: "GET" | "POST" | "DELETE";
+  methods: method[];
   handler: (req: NextApiRequest, res: NextApiResponse) => void;
   isPrivate?: boolean;
 }
 
 export default function withHandler({
-  method,
-  isPrivate = true,  //기본값이 true  비공개
+  methods,
+  isPrivate = true,
   handler,
 }: ConfigType) {
   return async function (
     req: NextApiRequest,
     res: NextApiResponse
   ): Promise<any> {
-    if (req.method !== method) {
+    //includes -> 배열안을 확인  method안에 아무것도 없을때
+    if (req.method && !methods.includes(req.method as any)) {
       return res.status(405).end();
     }
     if (isPrivate && !req.session.user) {
@@ -29,7 +32,7 @@ export default function withHandler({
     try {
       await handler(req, res);
     } catch (error) {
-      console.log(error);
+  
       return res.status(500).json({ error });
     }
   };
