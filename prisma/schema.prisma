@@ -25,7 +25,7 @@ model User {
   updateDt DateTime @updatedAt //업데이트 될때마다 이 필드가 변할것
   tokens   Token[]
   products Product[]  
-  
+  favs Fav[]
 }
 
 model Token {
@@ -35,6 +35,7 @@ model Token {
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
 }
 
 model Product {
@@ -47,4 +48,15 @@ model Product {
   name        String
   price       Int
   description String   @db.MediumText
+  favs Fav[]
+}
+
+model Fav {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

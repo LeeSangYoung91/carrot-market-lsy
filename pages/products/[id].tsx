@@ -6,9 +6,12 @@ import useSWR from "swr";
 import Link from "next/link";
 import { Product, User } from "@prisma/client";
 
+
+//user 타입 필드를 하나 더 가져옴
 interface ProductWithUser extends Product {
   user: User;
 }
+
 interface ItemDetailResponse {
   ok: boolean;
   product: ProductWithUser;
