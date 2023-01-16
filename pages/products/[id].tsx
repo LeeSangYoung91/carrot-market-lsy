@@ -2,10 +2,12 @@ import type { NextPage } from "next";
 import Button from "../../components/button";
 import Layout from "../../components/layout";
 import { useRouter } from 'next/router';
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import Link from "next/link";
 import { Product, User } from "@prisma/client";
-
+import useMutation from './../../libs/client/useMutation';
+import { cls } from "@libs/client/utils";
+import useUser from "@libs/client/useUser";
 
 //user 타입 필드를 하나 더 가져옴
 interface ProductWithUser extends Product {
@@ -16,12 +18,34 @@ interface ItemDetailResponse {
   ok: boolean;
   product: ProductWithUser;
   relatedProducts: Product[];
+  isLiked: boolean;
 }
 const ItemDetail: NextPage = () => {
+  const { user, isLoading } = useUser();
   const router = useRouter();  // (console.log(router.query);)
-  const { data } = useSWR<ItemDetailResponse>(
+
+//   Mutate
+// mutate(data?, shouldRevalidate?)
+// 캐시 된 데이터를 뮤테이트하기 위한 함수
+
+// Bound Mutate (제한된 뮤테이트)
+// useSWR에 의해 반환된 SWR 객체는 SWR의 키로 미리 바인딩 된 mutate() 함수도 포함합니다.
+// 기능적으로는 전역 mutate 함수와 동일하지만 key 파라미터를 요구하지 않습니다.
+// ex) const { data, mutate } = useSWR('/api/user', fetcher)
+const { mutate } = useSWRConfig();
+const { data, mutate: boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
+  const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`)
+   const onFavClick = () =>{
+    if (!data) return;
+    //첫번쨰는 캐시에있는 데이터 대신 사용할 새로운 데이터고(내가 원하는 데이터 아무거나) 다른하나는 true or false임  true면 계속 데이터 조회해오고 false면 데이터조회 안해옴
+    //...data -> 새로운 데이터안에 예전 데이터가 전부 들어가게됨   그래서 나머지데이터는 그대로있고 바꿀꺼만 바꿈
+   // mutate({ ...data, isLiked: !data.isLiked }, false);
+   boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
+   // mutate("/api/users/me", (prev: any) => ({ ok: !prev.ok }), false);
+    toggleFav({});
+  }
   return (
     <Layout canGoBack>
     <div className="px-4  py-4">
@@ -50,22 +74,45 @@ const ItemDetail: NextPage = () => {
           <p className=" my-6 text-gray-700">{data?.product?.description}</p>
           <div className="flex items-center justify-between space-x-2">
             <Button large text="Talk to seller" />
-            <button className="p-3 rounded-md flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500">
-              <svg
-                className="h-6 w-6 "
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
+            <button
+                onClick={onFavClick}
+                className={cls(
+                  "p-3 rounded-md flex items-center hover:bg-gray-100 justify-center ",
+                  data?.isLiked
+                    ? "text-red-500  hover:text-red-600"
+                    : "text-gray-400  hover:text-gray-500"
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
-              </svg>
+                {data?.isLiked ? (
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-6 w-6 "
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                )}
             </button>
           </div>
         </div>

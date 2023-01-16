@@ -10,7 +10,16 @@ async function handler(
   //  const {name,price,description} = req.body;
  //   const { user } = req.session;
  if (req.method === "GET") {
-  const products = await client.product.findMany({});
+  const products = await client.product.findMany({
+    include: {
+      _count: {
+        select: {
+          favs: true,
+        },
+      },
+    },
+  });
+ 
   res.json({
     ok: true,
     products,
