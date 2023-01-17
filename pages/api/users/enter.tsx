@@ -5,11 +5,6 @@ import client from "@libs/server/client";
 import smtpTransport from "@libs/server/email";
 
 //   connect
-// connect 쿼리는 ID 또는 고유 식별자를 지정하여 레코드를 기존 relation 레코드에 연결합니다. (레코드를 연결)
-// https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#connect
-
-// connectOrCreate
-// connectOrCreate는 ID 또는 고유 식별자로 기존 관련 레코드에 레코드를 연결하거나 레코드가 존재하지 않는 경우 새 관련 레코드를 생성합니다
 
 //Restart your typescript server in VSCode CTRL + SHIFT + P then type: restart TS Server
 const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
@@ -23,7 +18,18 @@ async function handler(
     const user = phone ? { phone } : email ? { email } : null;
     if (!user) return res.status(400).json({ ok: false });
     const payload = Math.floor(100000 + Math.random() * 900000) + "";
+    console.log({...user});
 
+
+    const alreadyExists = await client.user.findFirst({
+      where: {
+        ...user
+      },
+      select: {
+        id: true,
+      },
+    });
+    console.log(alreadyExists);
     
     const token = await client.token.create({
    

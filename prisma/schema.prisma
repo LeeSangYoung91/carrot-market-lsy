@@ -1,34 +1,38 @@
-//이파일은 프리스마 설정을 하고, 데이터가 어떻게 새겼는지 정의하는 파일임
+//pscale connect spare  후     npx prisma db push
+// npx prisma generate 어떻게 코드로 데이터베이스에 말을 걸지 클라이언트를 생성해줌 관리자에서 데이터베이스랑 직접 할수있게함 디비버 같은거
+//npx prisma studio    db패널
+
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider        = "prisma-client-js"
+ //previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
   provider             = "mysql"
   url                  = env("DATABASE_URL")
-  //fk 보장  이유는 planetScale은 fk속성이 없어서
-  relationMode = "prisma" 
+  relationMode = "prisma"
 }
 
-//https://app.planetscale.com/zxcdasd3/spare/main/schema
-//pscale connect spare  후     npx prisma db push
-// npx prisma generate 어떻게 코드로 데이터베이스에 말을 걸지 클라이언트를 생성해줌 관리자에서 데이터베이스랑 직접 할수있게함 디비버 같은거
-//npx prisma studio    db패널
 model User {
-  id       Int      @id @default(autoincrement())
-  phone    String?  @unique //필수가아니면 ?붙이면됨 전화번호가 있다면 하나였으면 좋겠음 = unique
-  email    String?  @unique
-  name     String
-  avatar   String? //파일
-  insertDt DateTime @default(now()) //now함수는 새유저가 만들어 질때 그 시점의 날짜를 가져와서 여기에 넣어주는 함수
-  updateDt DateTime @updatedAt //업데이트 될때마다 이 필드가 변할것
-  tokens   Token[]
-  products Product[]  
-  favs Fav[]
-  posts      Post[]
-  answers    Answer[]
-  wonderings Wondering[]
+  id              Int         @id @default(autoincrement())
+  phone           String?     @unique
+  email           String?     @unique
+  name            String
+  avatar          String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  tokens          Token[]
+  products        Product[]
+  posts           Post[]
+  answers         Answer[]
+  wonderings      Wondering[]
+  writtenReviews  Review[]    @relation(name: "writtenReviews")
+  receivedReviews Review[]    @relation(name: "receivedReviews")
+  fav             Fav[]
+  sales           Sale[]
+  purchases       Purchase[]
+
+  record          Record[]
 }
 
 model Token {
@@ -38,36 +42,26 @@ model Token {
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+    @@index([userId])
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   image       String
   name        String
   price       Int
-  description String   @db.MediumText
-  favs Fav[]
+  description String     @db.MediumText
+  favs        Fav[]
+  sales       Sale[]
+  purchases   Purchase[]
+  records     Record[]
 
-  @@index([userId])
+ @@index([userId])
 }
-
-model Fav {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-}
-
 
 model Post {
   id        Int         @id @default(autoincrement())
@@ -76,9 +70,11 @@ model Post {
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   question  String      @db.MediumText
+  latitude  Float?
+  longitude Float?
   answers   Answer[]
   wondering Wondering[]
-  
+
   @@index([userId])
 }
 
@@ -91,9 +87,8 @@ model Answer {
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
   answer    String   @db.MediumText
-  
-  @@index([userId])
-  @@index([postId])
+    @@index([userId])
+    @@index([postId])
 }
 
 model Wondering {
@@ -101,10 +96,80 @@ model Wondering {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int 
+  userId    Int
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  
+      @@index([userId])
+      @@index([postId])
+}
+
+model Review {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  review       String   @db.MediumText
+  createdBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade)
+  createdById  Int
+  createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
+  createdForId Int
+  score Int @default(1)
+    @@index([createdById])
+    @@index([createdForId])
+}
+
+model Sale {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
-  @@index([postId])
+  @@index([productId])
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+    @@index([userId])
+    @@index([productId])
+}
+
+model Fav {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+   @@index([userId])
+    @@index([productId])
+}
+
+model Record {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  kind      Kind
+  updatedAt DateTime @updatedAt
+    @@index([userId])
+    @@index([productId])
+}
+
+//3개는 같은모양이라 한번에 작업하려고 이거함 
+enum Kind {
+  Purchase
+  Sale
+  Fav
 }

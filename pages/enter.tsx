@@ -55,8 +55,9 @@ const Enter: NextPage = () => {
 
     //토큰맞으면 타는곳
     const router = useRouter();
+
     useEffect(() => {
-        
+        console.log(tokenData);
       if (tokenData?.ok) {
         router.push("/");
       }

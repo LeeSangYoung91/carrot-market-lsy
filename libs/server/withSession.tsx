@@ -9,7 +9,7 @@ declare module "iron-session" {
 }
 
 const cookieOptions = {
-  cookieName: "carrotsession",
+  cookieName: "spareSession",
   password: process.env.COOKIE_PASSWORD!,
 };
 
