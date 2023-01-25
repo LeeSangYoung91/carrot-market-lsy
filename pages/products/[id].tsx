@@ -22,7 +22,7 @@ interface ItemDetailResponse {
 }
 const ItemDetail: NextPage = () => {
   const { user, isLoading } = useUser();
-  const router = useRouter();  // (console.log(router.query);)
+  const router = useRouter(); 
 
 //   Mutate
 // mutate(data?, shouldRevalidate?)

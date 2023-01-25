@@ -1,7 +1,12 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { SWRConfig } from "swr";   //swr전역 설정 
+import useUser from "@libs/client/useUser";
 
+function CustomUser() {
+  const { user } = useUser();
+  return null;
+}
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     // 여기로 피시용 모바일용 제어
@@ -13,6 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         fetch(url).then((response) => response.json()),
     }}
   >
+    <CustomUser />
     <div className="w-full max-w-xl mx-auto">
       <Component {...pageProps} />
     </div>
