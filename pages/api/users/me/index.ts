@@ -80,6 +80,7 @@ async function handler(
       });
       res.json({ ok: true });
     }
+    
     if (name) {
       await client.user.update({
         where: {
