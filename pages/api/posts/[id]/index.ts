@@ -35,6 +35,8 @@ async function handler(
             },
           },
         },
+        take: 10,
+        skip: 10, //앞에 10개를 건너뛰고 다음 10개의 항목을 가져옴
       },
       _count: {
         select: {

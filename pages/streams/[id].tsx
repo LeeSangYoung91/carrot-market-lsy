@@ -37,7 +37,8 @@ const StreamData: NextPage = () => {
   const { data, mutate } = useSWR<StreamResponse>(
     router.query.id ? `/api/streams/${router.query.id}` : null,
     {
-      refreshInterval: 1000,
+      refreshInterval: 1000,  //1초마다 조회
+      revalidateOnFocus : false,  //해당 페이지에서만
     }
   );
   const [sendMessage, { loading, data: sendMessageData }] = useMutation(
@@ -65,7 +66,8 @@ const StreamData: NextPage = () => {
             ],
           },
         } as any),
-      false
+      false  //mutate의 2번째 인수는 재확인을 할지 말지에 관한것이다.  
+      //mutate는 캐시에 가짜 데이터를 넣을 수 있게 해주지만 그즉시 백엔드에서 이중확인을 받게됨 false는 이중확인을 안받는다는거임
     );
     sendMessage(form);
   };
